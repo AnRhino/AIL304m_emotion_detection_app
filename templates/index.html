@@ -1,104 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emotion Detector</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: none;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #system_response {
-            margin-top: 20px;
-            font-weight: bold;
-            color: #333;
-            text-align: left;
-            background: #e9ecef;
-            padding: 10px;
-            border-radius: 4px;
-            min-height: 40px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h2>Emotion Detector</h2>
-        <p>Nhập văn bản bên dưới để phân tích cảm xúc:</p>
-        
-        <textarea id="textToAnalyze" placeholder="Nhập câu của bạn vào đây..."></textarea>
-        <br>
-        <button id="analyzeButton" type="button">Phân tích cảm xúc</button>
-        
-        <div id="system_response">Kết quả sẽ hiển thị ở đây...</div>
-    </div>
-
-    <script>
-        document.getElementById("analyzeButton").addEventListener("click", async function () {
-            const textToAnalyze = document.getElementById("textToAnalyze").value.trim();
-            const responseElement = document.getElementById("system_response");
-
-            if (!textToAnalyze) {
-                responseElement.textContent = "Vui lòng nhập văn bản cần phân tích.";
-                return;
+<html>
+    <head>
+        <title>Emotion Detection</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script type="text/javascript" src="./static/mywebscript.js"></script>
+        <style>
+            .center-heading {
+                text-align: center;
             }
-
-            responseElement.textContent = "Đang phân tích...";
-
-            try {
-                const response = await fetch(
-                    "{{ url_for('sent_analyzer') }}?textToAnalyze=" +
-                    encodeURIComponent(textToAnalyze)
-                );
-
-                if (!response.ok) {
-                    throw new Error("HTTP " + response.status);
-                }
-
-                responseElement.textContent = await response.text();
-            } catch (error) {
-                console.error("Emotion detection request failed:", error);
-                responseElement.textContent =
-                    "Không thể gửi yêu cầu. Hãy kiểm tra server và thử lại.";
-            }
-        });
-    </script>
-
-</body>
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="card-body">
+                <h1 class="center-heading">NLP - Emotion Detection</h1>
+                <div style="padding: 25px 25px 25px 25px;">
+                    <h2 class="mb-3">
+                        <label class="form-label">Please enter the text to be analyzed</label>
+                        <input type="textarea" class="form-control" id="textToAnalyze">
+                    </h2>
+                    <div style="padding: 25px 25px 25px 25px;">
+                        <button onclick="RunSentimentAnalysis()" class="btn btn-secondary">Run Sentiment Analysis</button>
+                    </div>
+                    <div style="padding: 25px 25px 25px 25px;"></div>
+                    <h2 class="mb-3">
+                        <label class="form-label">Result of Emotion Detection</label>
+                        <div id="system_response"></div>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
