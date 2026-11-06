@@ -1,11 +1,18 @@
-from EmotionDetection.emotion_detection import emotion_detector
+"""
+This module runs a Flask web application for Emotion Detection using IBM Watson NLP service.
+"""
 from flask import Flask, render_template, request
+from EmotionDetection.emotion_detection import emotion_detector
 
 app = Flask("Emotion Detector")
 
 
 @app.route("/emotionDetector")
 def sent_analyzer():
+    """
+    This function analyzes the text input for emotions 
+    using the emotion_detector module and returns a formatted string.
+    """
     # Lấy đoạn text từ URL query parameter
     text_to_analyze = request.args.get("textToAnalyze")
 
@@ -25,6 +32,7 @@ def sent_analyzer():
 
 @app.route("/")
 def render_index_page():
+    """This function renders the main application index page."""
     return render_template("index.html")
 
 
