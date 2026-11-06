@@ -50,3 +50,4 @@ emotion_detection_app/
    ```bash
    python3 server.py
    ```
+
