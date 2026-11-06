@@ -19,7 +19,7 @@ def sent_analyzer():
     response = emotion_detector(text_to_analyze)
 
     # Xử lý lỗi khi đầu vào không hợp lệ hoặc rỗng
-    if response["dominant_emotion"] is None:
+    if not response or response.get("dominant_emotion") is None:
         return "Invalid text! Please try again!"
 
     return (
