@@ -1,33 +1,163 @@
-<html>
-    <head>
-        <title>Emotion Detection</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script type="text/javascript" src="./static/mywebscript.js"></script>
-        <style>
-            .center-heading {
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="card">
-            <div class="card-body">
-                <h1 class="center-heading">NLP - Emotion Detection</h1>
-                <div style="padding: 25px 25px 25px 25px;">
-                    <h2 class="mb-3">
-                        <label class="form-label">Please enter the text to be analyzed</label>
-                        <input type="textarea" class="form-control" id="textToAnalyze">
-                    </h2>
-                    <div style="padding: 25px 25px 25px 25px;">
-                        <button onclick="RunSentimentAnalysis()" class="btn btn-secondary">Run Sentiment Analysis</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Emotion Detection | NLP Analyzer</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./static/style.css">
+</head>
+<body>
+
+    <main class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="card main-card border-0 p-4 p-md-5">
+                    
+                    <!-- Header Section -->
+                    <div class="text-center mb-4">
+                        <div class="brand-badge mb-3">
+                            <span class="pulse-dot"></span>
+                            <span>Watson NLP Engine</span>
+                        </div>
+                        <h1 class="title-gradient display-6 mb-2">NLP - Emotion Detection</h1>
+                        <p class="text-secondary small mb-0">
+                            Analyze emotions accurately across 5 distinct categories: joy, sadness, fear, anger, and disgust.
+                        </p>
                     </div>
-                    <div style="padding: 25px 25px 25px 25px;"></div>
-                    <h2 class="mb-3">
-                        <label class="form-label">Result of Emotion Detection</label>
-                        <div id="system_response"></div>
-                    </h2>
+
+                    <!-- Input Section -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label for="textToAnalyze" class="form-label fw-bold mb-0 text-dark">
+                                <i class="bi bi-chat-left-text me-1 text-primary"></i> Enter statement to analyze:
+                            </label>
+                            <span class="text-muted small" id="charCounter">0 characters</span>
+                        </div>
+
+                        <textarea 
+                            id="textToAnalyze" 
+                            class="form-control textarea-custom mb-3" 
+                            rows="4" 
+                            placeholder="Type or paste any English text here (e.g. 'I am thrilled about our new project launch!')..."
+                        ></textarea>
+
+                        <!-- Quick Samples Chips -->
+                        <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                            <span class="small text-muted fw-semibold me-1"><i class="bi bi-lightning-charge-fill text-warning"></i> Quick test:</span>
+                            <button type="button" class="sample-chip" onclick="setSample('I am glad this happened')">
+                                <span>😃</span> Joy
+                            </button>
+                            <button type="button" class="sample-chip" onclick="setSample('I am really angry about this')">
+                                <span>😡</span> Anger
+                            </button>
+                            <button type="button" class="sample-chip" onclick="setSample('I feel disgusted just thinking about it')">
+                                <span>🤢</span> Disgust
+                            </button>
+                            <button type="button" class="sample-chip" onclick="setSample('I am so sad about this')">
+                                <span>😢</span> Sadness
+                            </button>
+                            <button type="button" class="sample-chip" onclick="setSample('I am really afraid this will happen')">
+                                <span>😨</span> Fear
+                            </button>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button id="runBtn" onclick="RunSentimentAnalysis()" class="btn btn-analyze d-inline-flex align-items-center gap-2">
+                                <i class="bi bi-stars"></i>
+                                <span>Run Sentiment Analysis</span>
+                            </button>
+                            <button type="button" onclick="clearAnalysis()" class="btn btn-clear d-inline-flex align-items-center gap-2" title="Clear text and results">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                                <span>Clear</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Section -->
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 fw-bold mb-0 text-dark">
+                                <i class="bi bi-graph-up-arrow me-1 text-primary"></i> Result of Emotion Detection
+                            </h2>
+                        </div>
+
+                        <!-- System Response Container (Kept with exact id 'system_response' for Coursera/JS compatibility) -->
+                        <div class="result-box shadow-sm" id="resultCard">
+                            <div id="system_response" class="result-text text-muted fst-italic">
+                                Results will be displayed here after running analysis.
+                            </div>
+
+                            <!-- Visual Breakdown (Auto-rendered when data is parsed) -->
+                            <div id="visual_breakdown" class="d-none">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="small fw-bold text-uppercase text-muted">Dominant Emotion</span>
+                                    <span id="dominantBadge" class="badge rounded-pill px-3 py-2 fs-6 bg-primary text-white"></span>
+                                </div>
+                                
+                                <div class="row g-3" id="scoresGrid">
+                                    <!-- Emotion bars injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Note -->
+                    <div class="text-center mt-4 pt-2">
+                        <p class="text-muted small mb-0">
+                            Tip: Press <kbd class="bg-light text-dark border">Ctrl</kbd> + <kbd class="bg-light text-dark border">Enter</kbd> to analyze quickly.
+                        </p>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </body>
+    </main>
+
+    <!-- Custom Script -->
+    <script type="text/javascript" src="./static/mywebscript.js"></script>
+    <script>
+        // Character counter
+        const textInput = document.getElementById('textToAnalyze');
+        const charCounter = document.getElementById('charCounter');
+
+        textInput.addEventListener('input', () => {
+            charCounter.textContent = `${textInput.value.length} characters`;
+        });
+
+        // Quick sample filler
+        function setSample(text) {
+            textInput.value = text;
+            charCounter.textContent = `${text.length} characters`;
+            textInput.focus();
+        }
+
+        // Clear button
+        function clearAnalysis() {
+            textInput.value = '';
+            charCounter.textContent = '0 characters';
+            const sysResp = document.getElementById('system_response');
+            sysResp.classList.remove('d-none');
+            sysResp.className = 'result-text text-muted fst-italic';
+            sysResp.innerHTML = 'Results will be displayed here after running analysis.';
+            document.getElementById('visual_breakdown').classList.add('d-none');
+            document.getElementById('resultCard').style.borderColor = '#e2e8f0';
+        }
+
+        // Keyboard shortcut: Ctrl + Enter
+        textInput.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                RunSentimentAnalysis();
+            }
+        });
+    </script>
+</body>
 </html>
